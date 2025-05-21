@@ -39,18 +39,25 @@ const Header: React.FC = () => {
           <Logo />
           <div className="flex items-center gap-4">
             <Link
-              href="/sign-in"
-              className="hidden lg:block bg-primary text-white hover:bg-primary/15 hover:text-primary px-16 py-5 rounded-full text-lg font-medium"
+              href="/auth/hospital/signup"
+              className="hidden lg:block bg-primary text-white hover:bg-primary/15 hover:text-primary px-4 py-2 rounded-lg text-lg font-thin"
               onClick={() => {}}
             >
-              Sign In
+              Hospitals
             </Link>
             <Link
-              href="/sign-up"
-              className="hidden lg:block bg-primary/15 hover:bg-primary text-primary hover:text-white px-16 py-5 rounded-full text-lg font-medium"
+              href="/"
+              className="hidden lg:block bg-primary text-white hover:bg-primary/15 hover:text-primary px-4 py-2 rounded-lg text-lg font-thin"
               onClick={() => {}}
             >
-              Sign Up
+              Government
+            </Link>
+            <Link
+              href="/"
+              className="hidden lg:block bg-primary text-white hover:bg-primary/15 hover:text-primary px-4 py-2 rounded-lg text-lg font-thin"
+              onClick={() => {}}
+            >
+              Administrator
             </Link>
             <button
               onClick={() => setNavbarOpen(!navbarOpen)}
@@ -87,22 +94,31 @@ const Header: React.FC = () => {
           <nav className="flex flex-col items-start p-4">
             <div className="mt-4 flex flex-col space-y-4 w-full">
               <Link
-                href="/sign-in"
+                href="/auth/hospital/signin"
                 className="bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white"
                 onClick={() => {
                   setNavbarOpen(false);
                 }}
               >
-                Sign In
+                Hospitals
               </Link>
               <Link
-                href="/sign-up"
-                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                href="/"
+                className="bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white"
                 onClick={() => {
                   setNavbarOpen(false);
                 }}
               >
-                Sign Up
+                Government
+              </Link>
+              <Link
+                href="/"
+                className="bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white"
+                onClick={() => {
+                  setNavbarOpen(false);
+                }}
+              >
+                Administrator
               </Link>
             </div>
           </nav>

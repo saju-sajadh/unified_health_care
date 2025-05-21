@@ -1,7 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+
 import ScrollToTop from "@/components/ScrollToTop";
 const font = Poppins({
   subsets: ["latin"],
@@ -18,9 +17,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={`${font.className}`}>
-          <Header />
           {children}
-          <Footer />
           <ScrollToTop />
         </body>
       </html>
