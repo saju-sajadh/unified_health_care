@@ -53,6 +53,7 @@ export interface PatientData {
   };
   hospitalId: string;
   medicalRecords?: any[];
+  createdAt: string;
 }
 
 export interface HospitalProfile {

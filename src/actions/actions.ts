@@ -13,7 +13,8 @@ export async function createUser(userData: UserData) {
     await connectDB();
 
     if (!["hospital", "government", "admin"].includes(userData.role)) {
-      return { success: false, error: "Invalid role specified" };
+      const result = { success: false, error: "Invalid role specified" };
+      return JSON.parse(JSON.stringify(result));
     }
 
     if (userData.role === "hospital") {
@@ -53,10 +54,12 @@ export async function createUser(userData: UserData) {
       }
     }
 
-    return { success: true };
+    return JSON.parse(JSON.stringify({ success: true }));
   } catch (error) {
     console.error("Error creating user:", error);
-    return { success: false, error: "Failed to create user" };
+    return JSON.parse(
+      JSON.stringify({ success: false, error: "Failed to create user" })
+    );
   }
 }
 
@@ -90,7 +93,9 @@ export async function getUser(
     return JSON.parse(JSON.stringify(result));
   } catch (error) {
     console.error("Error retrieving user:", error);
-    return { success: false, error: "Failed to retrieve user" };
+    return JSON.parse(
+      JSON.stringify({ success: false, error: "Failed to retrieve user" })
+    );
   }
 }
 
@@ -101,15 +106,19 @@ export async function getPatients(
     await connectDB();
     const hospital = await Hospital.findOne({ userId: hospitalUserId });
     if (!hospital) {
-      return { success: false, error: "Hospital not found" };
+      return JSON.parse(
+        JSON.stringify({ success: false, error: "Hospital not found" })
+      );
     }
     const patients = await Patient.find({ hospitalId: hospital._id }).lean<
       PatientData[]
     >();
-    return { success: true, data: patients };
+    return JSON.parse(JSON.stringify({ success: true, data: patients }));
   } catch (error) {
     console.error("Error retrieving patients:", error);
-    return { success: false, error: "Failed to retrieve patients" };
+    return JSON.parse(
+      JSON.stringify({ success: false, error: "Failed to retrieve patients" })
+    );
   }
 }
 
@@ -147,15 +156,19 @@ export async function registerPatient(formData: FormData) {
       !patientData.lastName ||
       !patientData.hospitalId
     ) {
-      return {
-        success: false,
-        error: "UHN, first name, last name, and hospital ID are required",
-      };
+      return JSON.parse(
+        JSON.stringify({
+          success: false,
+          error: "UHN, first name, last name, and hospital ID are required",
+        })
+      );
     }
 
     const hospital = await Hospital.findOne({ userId: patientData.hospitalId });
     if (!hospital) {
-      return { success: false, error: "Invalid hospital ID" };
+      return JSON.parse(
+        JSON.stringify({ success: false, error: "Invalid hospital ID" })
+      );
     }
 
     if (patientData._id) {
@@ -164,10 +177,12 @@ export async function registerPatient(formData: FormData) {
         _id: { $ne: patientData._id },
       });
       if (existingPatient) {
-        return {
-          success: false,
-          error: "UHN is already in use by another patient",
-        };
+        return JSON.parse(
+          JSON.stringify({
+            success: false,
+            error: "UHN is already in use by another patient",
+          })
+        );
       }
       await Patient.findByIdAndUpdate(
         patientData._id,
@@ -181,7 +196,9 @@ export async function registerPatient(formData: FormData) {
     } else {
       const existingPatient = await Patient.findOne({ uhn: patientData.uhn });
       if (existingPatient) {
-        return { success: false, error: "UHN is already in use" };
+        return JSON.parse(
+          JSON.stringify({ success: false, error: "UHN is already in use" })
+        );
       }
       await Patient.create({
         ...patientData,
@@ -189,10 +206,12 @@ export async function registerPatient(formData: FormData) {
       });
     }
 
-    return { success: true };
+    return JSON.parse(JSON.stringify({ success: true }));
   } catch (error) {
     console.error("Error registering patient:", error);
-    return { success: false, error: "Failed to register patient" };
+    return JSON.parse(
+      JSON.stringify({ success: false, error: "Failed to register patient" })
+    );
   }
 }
 
@@ -202,10 +221,14 @@ export async function checkUHN(
   try {
     await connectDB();
     const existingPatient = await Patient.findOne({ uhn });
-    return { success: true, isUnique: !existingPatient };
+    return JSON.parse(
+      JSON.stringify({ success: true, isUnique: !existingPatient })
+    );
   } catch (error) {
     console.error("Error checking UHN:", error);
-    return { success: false, error: "Failed to check UHN" };
+    return JSON.parse(
+      JSON.stringify({ success: false, error: "Failed to check UHN" })
+    );
   }
 }
 
@@ -216,12 +239,19 @@ export async function getHospitalProfile(
     await connectDB();
     const hospital = await Hospital.findOne({ userId }).lean<HospitalProfile>();
     if (!hospital) {
-      return { success: false, error: "Hospital profile not found" };
+      return JSON.parse(
+        JSON.stringify({ success: false, error: "Hospital profile not found" })
+      );
     }
-    return { success: true, data: hospital };
+    return JSON.parse(JSON.stringify({ success: true, data: hospital }));
   } catch (error) {
     console.error("Error retrieving hospital profile:", error);
-    return { success: false, error: "Failed to retrieve hospital profile" };
+    return JSON.parse(
+      JSON.stringify({
+        success: false,
+        error: "Failed to retrieve hospital profile",
+      })
+    );
   }
 }
 
@@ -234,7 +264,9 @@ export async function updateHospitalProfile(
 
     const hospital = await Hospital.findOne({ userId });
     if (!hospital) {
-      return { success: false, error: "Hospital profile not found" };
+      return JSON.parse(
+        JSON.stringify({ success: false, error: "Hospital profile not found" })
+      );
     }
 
     // Update only the provided fields
@@ -251,7 +283,8 @@ export async function updateHospitalProfile(
         city: profileData.address?.city ?? hospital.address?.city,
         state: profileData.address?.state ?? hospital.address?.state,
         country: profileData.address?.country ?? hospital.address?.country,
-        postalCode: profileData.address?.postalCode ?? hospital.address?.postalCode,
+        postalCode:
+          profileData.address?.postalCode ?? hospital.address?.postalCode,
       },
       departments: profileData.departments ?? hospital.departments,
       licenseNumber: profileData.licenseNumber ?? hospital.licenseNumber,
@@ -265,12 +298,22 @@ export async function updateHospitalProfile(
     ).lean<HospitalProfile>();
 
     if (!updatedHospital) {
-      return { success: false, error: "Failed to update hospital profile" };
+      return JSON.parse(
+        JSON.stringify({
+          success: false,
+          error: "Failed to update hospital profile",
+        })
+      );
     }
 
-    return { success: true, data: updatedHospital };
+    return JSON.parse(JSON.stringify({ success: true, data: updatedHospital }));
   } catch (error) {
     console.error("Error updating hospital profile:", error);
-    return { success: false, error: "Failed to update hospital profile" };
+    return JSON.parse(
+      JSON.stringify({
+        success: false,
+        error: "Failed to update hospital profile",
+      })
+    );
   }
 }
